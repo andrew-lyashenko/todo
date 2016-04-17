@@ -1,0 +1,40 @@
+doctype html
+html(ng-app="todoApp")
+  head
+    title= title
+    meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1")
+    link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
+    link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
+    link(rel="stylesheet" href="/styles/main.css")
+  body
+    .container
+      h2= title
+      hr
+      .row(ng-controller='TodoCtrl')
+        .col-md-6.col-md-offset-3
+          form(ng-submit='addTodo()')
+            input.form-control(ng-model='newTodo' autofocus=true todo-focus="!todos.length")
+            span.help-block(ng-cloak='' ng-show='todos.length')
+              span.label.label-primary(ng-if='todosCount')
+                | Todos done: {{todosDoneCount}} / {{todosCount}}
+              .pull-right(ng-if='todosDoneCount')
+                button.btn.btn-danger.btn-xs(ng-click="clearDoneTodos()" type="button")
+                  | Clear {{todosDoneCount}}
+                  ng-pluralize(count="todosDoneCount" when="{one: ' item', other: ' items'}")
+          section(ng-cloak='')
+            ul.todo-list
+              li(ng-repeat='todo in todos' ng-class="{'todo-done': todo.done}")
+                label
+                  input(type='checkbox' ng-model='todo.done' ng-change='toggleTodo(todo)')
+                  .todo-state
+                    span.fa.pull-left(ng-class="todoStateIcon(todo)")
+                  .todo-label
+                    span(ng-show='todo != editedTodo') {{todo.title}}
+                    input(type="text" ng-show='todo == editedTodo' ng-model="todo.title" todo-focus='todo == editedTodo' ng-blur='doneEditing(todo)' on-enter='doneEditing(todo)')
+                  .todo-actions
+                    button.btn.btn-link.btn-sm(ng-click='removeTodo(todo)')
+                      span.fa.fa-remove
+                    button.btn.btn-link.btn-sm(ng-click='editTodo(todo)' ng-show='todo != editedTodo')
+                      span.fa.fa-pencil
+      hr
+    script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.js" data-main="/js/main")
